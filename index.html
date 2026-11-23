@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B. H. Khanov | Author</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Architype Van"', 'Outfit', 'sans-serif'],
+                        display: ['Horizon', 'Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#020617',      
+                            blue: '#0f172a',      
+                            red: '#7f1d1d',       
+                            accent: '#e11d48',    
+                            light: '#f8fafc',     
+                            muted: '#94a3b8',     
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #020617; /* Fallback */
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        ::selection {
+            background-color: rgba(225, 29, 72, 0.4);
+            color: #ffffff;
+        }
+        
+        /* 3D Canvas positioning */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Tactical Grid Overlay */
+        .tactical-grid {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Upgraded Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(225, 29, 72, 0.05);
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg);
+            transition: 0.7s;
+        }
+
+        .glass-panel:hover::before {
+            left: 200%;
+        }
+
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 150ms; }
+        .reveal-delay-2 { transition-delay: 300ms; }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen">
+
+    <!-- 3D Canvas Background -->
+    <canvas id="webgl-canvas"></canvas>
+    
+    <!-- Subtle tactical grid over the 3D scene -->
+    <div class="tactical-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-brand-dark/40 backdrop-blur-xl border-b border-white/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0">
+                    <a href="#" class="font-display text-xl md:text-2xl font-bold tracking-widest text-white hover:text-brand-accent transition-colors duration-300 uppercase relative group">
+                        B. H. Khanov
+                        <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-brand-accent group-hover:w-full transition-all duration-500"></span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#about" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">About</a>
+                    <a href="#books" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Books</a>
+                    <a href="#newsletter" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Contact</a>
+                    <a href="#featured" class="px-6 py-3 bg-brand-accent/10 border border-brand-accent/50 text-brand-accent text-xs uppercase tracking-[0.2em] hover:bg-brand-accent hover:text-white hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all duration-300 rounded-full font-display">Upcoming Debut</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-muted hover:text-white focus:outline-none p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-dark/90 backdrop-blur-2xl border-t border-white/10">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col font-display">
+                <a href="#about" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">About</a>
+                <a href="#books" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">Books</a>
+                <a href="#newsletter" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper (Ensures it sits above the fixed canvas) -->
+    <main class="relative z-10">
+        
+        <!-- Hero Section -->
+        <section class="pt-32 pb-16 md:pt-48 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center min-h-screen justify-center reveal">
+            <div class="flex flex-col items-center max-w-6xl mx-auto">
+                <p class="text-brand-accent text-xs md:text-sm font-display uppercase tracking-[0.4em] mb-8 font-bold reveal reveal-delay-1">London-Based Author</p>
+                <h1 class="font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] mb-10 text-transparent bg-clip-text bg-gradient-to-br from-white via-brand-light to-brand-red drop-shadow-2xl text-center uppercase reveal reveal-delay-1">
+                    UNRELENTING<br/>ACTION &<br/>SUSPENSE
+                </h1>
+                <p class="text-brand-light/80 text-lg md:text-xl mb-14 leading-relaxed max-w-2xl font-light tracking-wide reveal reveal-delay-2">
+                    Immerse yourself in high-stakes, adrenaline-fueled action. The explosive debut series arrives 27/07/2027.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 w-full sm:w-auto justify-center reveal reveal-delay-2">
+                    <a href="#featured" class="px-10 py-4 bg-brand-accent/20 border border-brand-accent text-white text-center uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:shadow-[0_0_30px_rgba(225,29,72,0.6)] hover:-translate-y-1 transition-all duration-300 rounded-full font-display font-bold backdrop-blur-md">View Debut</a>
+                    <a href="#about" class="px-10 py-4 border border-white/20 text-brand-light text-center uppercase tracking-[0.2em] text-xs hover:border-white/60 hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 rounded-full bg-black/40 backdrop-blur-md font-display font-bold">Read Biography</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Book Section -->
+        <section id="featured" class="py-24 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="glass-panel p-8 md:p-16 flex flex-col md:flex-row items-center gap-16 reveal">
+                    <!-- Book Cover -->
+                    <div class="md:w-1/3 flex justify-center perspective-1000 relative">
+                        <div class="absolute inset-0 bg-brand-accent rounded-full blur-[100px] opacity-20 z-0"></div>
+                        <a href="#" class="relative z-10 block transition-transform hover:-translate-y-4 hover:scale-105 hover:rotate-2 duration-500 cursor-pointer group">
+                            <img src="https://placehold.co/500x750/0f172a/e11d48?text=Driven+Blind" alt="Unlicensed Intentions: Driven Blind" class="w-full max-w-[280px] md:max-w-[320px] h-auto shadow-[0_30px_60px_rgba(0,0,0,0.8)] rounded-lg ring-1 ring-white/20 group-hover:ring-brand-accent/50 transition-all">
+                        </a>
+                    </div>
+                    <!-- Book Details -->
+                    <div class="md:w-2/3 text-center md:text-left z-10">
+                        <p class="text-brand-accent text-xs font-display font-bold uppercase tracking-[0.3em] mb-4 reveal reveal-delay-1">Series Premiere • Arrives 27/07/2027</p>
+                        <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 text-white leading-tight uppercase reveal reveal-delay-1">Unlicensed Intentions</h2>
+                        <h3 class="font-display font-medium text-2xl md:text-3xl tracking-widest mb-8 text-brand-red uppercase reveal reveal-delay-1">Driven Blind</h3>
+                        <p class="text-brand-muted text-lg mb-10 leading-relaxed max-w-2xl font-light reveal reveal-delay-2">
+                            When a legendary underground getaway driver is blinded in a botched heist, he must rely on a mysterious rogue navigator to survive the deadliest run of his life. Hunted by the ruthless syndicate that betrayed them, every turn is a deadly gamble in this relentless, high-octane action thriller.
+                        </p>
+                        
+                        <div class="flex flex-col gap-4 sm:flex-row justify-center md:justify-start items-center mb-10 reveal reveal-delay-2">
+                            <span class="text-brand-light italic text-base border-l-2 border-brand-accent pl-4 font-sans font-light bg-black/30 p-4 rounded-r-xl">"A relentlessly paced, explosive debut that leaves you completely breathless." — Advance Reader</span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4 justify-center md:justify-start reveal reveal-delay-2">
+                            <a href="#newsletter" class="px-8 py-4 bg-white text-brand-dark font-display font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:text-white hover:shadow-[0_0_25px_rgba(225,29,72,0.6)] transition-all rounded-full">Pre-order Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Books Section -->
+        <section id="books" class="py-32 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-20 reveal">
+                    <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-8 uppercase drop-shadow-lg">Works in Progress</h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent mx-auto rounded-full shadow-[0_0_20px_rgba(225,29,72,0.8)]"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <!-- Book 1 -->
+                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-1">
+                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
+                            <img src="https://placehold.co/400x600/050b14/f8fafc?text=Rat+to+Rat" alt="Unlicensed Intentions: Rat to Rat" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
+                        </a>
+                        <h3 class="font-display font-bold text-xl tracking-widest text-white mb-1 uppercase text-center">Unlicensed Intentions</h3>
+                        <h4 class="font-display font-bold text-lg tracking-widest text-brand-accent mb-4 uppercase text-center drop-shadow-md">Rat to Rat</h4>
+                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">The explosive sequel to Driven Blind. When the dust settles, a fresh betrayal forces him back into the lethal underground. (Drafting)</p>
+                    </div>
+
+                    <!-- Book 2 -->
+                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-2">
+                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
+                            <img src="https://placehold.co/400x600/0a192f/f8fafc?text=Neon+Vendetta" alt="Neon Vendetta" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
+                        </a>
+                        <h3 class="font-display font-bold text-2xl tracking-widest text-white mb-4 uppercase text-center group-hover:text-brand-accent transition-colors">Neon Vendetta</h3>
+                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">A disgraced enforcer hunts a rogue syndicate through London's unforgiving, neon-lit criminal underbelly. (Outlining)</p>
+                    </div>
+
+                    <!-- Book 3 -->
+                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-1 md:reveal-delay-3 lg:reveal-delay-3">
+                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
+                            <img src="https://placehold.co/400x600/7a112c/f8fafc?text=Thames+Requiem" alt="Thames Requiem" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
+                        </a>
+                        <h3 class="font-display font-bold text-2xl tracking-widest text-white mb-4 uppercase text-center group-hover:text-brand-accent transition-colors">Thames Requiem</h3>
+                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">A high-stakes riverway heist goes terribly wrong, leaving no room for error and no one to trust. (Concept)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-32 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center glass-panel p-10 md:p-20 reveal">
+                <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-10 uppercase drop-shadow-md">About B. H. Khanov</h2>
+                <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto rounded-full mb-14"></div>
+                
+                <p class="text-brand-light/90 mb-8 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
+                    B. H. Khanov is a debut author based in London, crafting explosive action thrillers and high-stakes contemporary fiction. With a mind for intricate plots and relentless pacing, he builds stories that refuse to tap the brakes.
+                </p>
+                <p class="text-brand-light/90 mb-14 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
+                    Drawing inspiration from the gritty, hidden underworld of London and a fascination with high-stakes survival, he is currently putting the final touches on his highly anticipated debut action series.
+                </p>
+                
+                <a href="#newsletter" class="inline-flex items-center gap-4 text-brand-accent font-display font-bold uppercase tracking-[0.2em] hover:text-white transition-colors text-sm hover:translate-x-2 duration-300 reveal reveal-delay-2">
+                    Get in Touch 
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Newsletter/Contact Section -->
+        <section id="newsletter" class="py-32 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
+                <h2 class="font-display font-bold text-3xl md:text-5xl tracking-widest mb-8 text-white uppercase drop-shadow-lg">Join the Readers' Club</h2>
+                <p class="text-brand-muted text-lg mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                    Subscribe to get exclusive updates on my debut release, early access to cover reveals, and news about upcoming projects directly to your inbox.
+                </p>
+                
+                <form class="flex flex-col sm:flex-row max-w-xl mx-auto gap-4 sm:gap-0 shadow-2xl shadow-black/80 rounded-3xl sm:rounded-full bg-black/60 backdrop-blur-2xl border border-white/20 p-2 focus-within:border-brand-accent/50 transition-colors">
+                    <input type="email" placeholder="Enter your email address" required class="w-full sm:w-2/3 px-8 py-4 bg-transparent text-white placeholder-brand-muted focus:outline-none rounded-full font-sans font-light tracking-wide">
+                    <button type="submit" class="w-full sm:w-1/3 px-8 py-4 bg-brand-accent text-white font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-red hover:shadow-[0_0_20px_rgba(225,29,72,0.8)] transition-all rounded-full border border-transparent font-display">
+                        Subscribe
+                    </button>
+                </form>
+                <p class="text-brand-muted/70 text-sm mt-8 font-sans font-light">No spam. Unsubscribe at any time.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black/80 backdrop-blur-2xl text-brand-muted py-12 border-t border-white/10 relative z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="font-display font-bold text-xl tracking-widest text-white mb-3 uppercase">B. H. Khanov</p>
+                    <p class="text-sm font-sans font-light">© 2026 B. H. Khanov. All rights reserved.</p>
+                </div>
+                
+                <div class="text-xs font-display font-bold text-center md:text-right uppercase tracking-[0.2em] text-brand-muted/80">
+                    <p>Based in London, UK</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // ----------------------------------------------------
+        // UI INTERACTION LOGIC
+        // ----------------------------------------------------
+        
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        const mobileLinks = menu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar blur and shadow on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-[0_10px_30px_rgba(0,0,0,0.8)]');
+                navbar.classList.replace('bg-brand-dark/40', 'bg-brand-dark/95');
+            } else {
+                navbar.classList.remove('shadow-[0_10px_30px_rgba(0,0,0,0.8)]');
+                navbar.classList.replace('bg-brand-dark/95', 'bg-brand-dark/40');
+            }
+        });
+
+        // Scroll Reveal Observer
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ----------------------------------------------------
+        // THREE.JS 3D BACKGROUND LOGIC
+        // ----------------------------------------------------
+        
+        window.onload = function () {
+            const canvas = document.querySelector('#webgl-canvas');
+            const scene = new THREE.Scene();
+            
+            // Subtle dark fog for depth
+            scene.fog = new THREE.FogExp2(0x020617, 0.015);
+
+            // Camera Setup
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+
+            // Renderer Setup
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x020617, 1); // Dark background fallback
+
+            // 1. Create Particle System (Ash/Sparks)
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = window.innerWidth < 768 ? 800 : 2500; // Less particles on mobile
+            const posArray = new Float32Array(particlesCount * 3);
+            const colorArray = new Float32Array(particlesCount * 3);
+
+            const color1 = new THREE.Color(0xe11d48); // Red
+            const color2 = new THREE.Color(0x3b82f6); // Blue spark
+            const color3 = new THREE.Color(0xffffff); // White hot
+
+            for(let i = 0; i < particlesCount * 3; i+=3) {
+                // Spread particles widely
+                posArray[i] = (Math.random() - 0.5) * 150; 
+                posArray[i+1] = (Math.random() - 0.5) * 150; 
+                posArray[i+2] = (Math.random() - 0.5) * 100;
+
+                // Mix colors randomly
+                let mixedColor;
+                const rand = Math.random();
+                if(rand < 0.6) mixedColor = color1;
+                else if (rand < 0.9) mixedColor = color2;
+                else mixedColor = color3;
+
+                colorArray[i] = mixedColor.r;
+                colorArray[i+1] = mixedColor.g;
+                colorArray[i+2] = mixedColor.b;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+            // Custom glowing material
+            const material = new THREE.PointsMaterial({
+                size: window.innerWidth < 768 ? 0.3 : 0.4,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, material);
+            scene.add(particlesMesh);
+
+            // 2. Create Floating Abstract Wireframes (Sci-Fi/Action Vibe)
+            const shapeMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xe11d48, 
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.05 
+            });
+            
+            const shape1 = new THREE.Mesh(new THREE.IcosahedronGeometry(12, 1), shapeMaterial);
+            shape1.position.set(-25, 10, -20);
+            scene.add(shape1);
+
+            const shape2 = new THREE.Mesh(new THREE.OctahedronGeometry(18, 1), shapeMaterial);
+            shape2.position.set(30, -15, -30);
+            scene.add(shape2);
+
+            // 3. Mouse Interaction Logic
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+            
+            // Adjust camera slightly on scroll for parallax
+            let scrollY = window.scrollY;
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
+            });
+
+            // 4. Animation Loop
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                const elapsedTime = clock.getElapsedTime();
+                
+                // Slowly rotate entire particle field
+                particlesMesh.rotation.y = elapsedTime * 0.03;
+                particlesMesh.rotation.x = elapsedTime * 0.01;
+
+                // Rotate abstract shapes
+                shape1.rotation.x = elapsedTime * 0.1;
+                shape1.rotation.y = elapsedTime * 0.15;
+                shape2.rotation.x = -elapsedTime * 0.05;
+                shape2.rotation.z = elapsedTime * 0.1;
+
+                // Smooth mouse following for particles (parallax)
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+                particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
+                particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
+                
+                // Move camera based on mouse AND scroll position
+                const cameraTargetX = (mouseX * 0.01);
+                const cameraTargetY = (-mouseY * 0.01) - (scrollY * 0.01);
+                
+                camera.position.x += (cameraTargetX - camera.position.x) * 0.05;
+                camera.position.y += (cameraTargetY - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+                window.requestAnimationFrame(animate);
+            }
+
+            // 5. Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            });
+
+            // Start loop
+            animate();
+        };
+    </script>
+</body>
+</html>
