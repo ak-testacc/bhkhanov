@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Dark blue to deep red gradient matching the site theme -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020617" />
+      <stop offset="65%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </linearGradient>
+    
+    <!-- Subtle crimson glow for the accent line -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="100" height="100" rx="22" fill="url(#bg-grad)" />
+  
+  <!-- Subtle glass-like inner border -->
+  <rect x="2" y="2" width="96" height="96" rx="20" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="2" />
+
+  <!-- BHK Monogram -->
+  <text x="50" y="57" 
+        font-family="'Orbitron', 'Arial Black', sans-serif" 
+        font-weight="900" 
+        font-size="31" 
+        letter-spacing="1.5" 
+        fill="#f8fafc" 
+        text-anchor="middle">BHK</text>
+
+  <!-- Crimson tactical underline accent -->
+  <rect x="26" y="67" width="48" height="4" rx="2" fill="#e11d48" filter="url(#glow)" />
+</svg>
