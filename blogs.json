@@ -1,7 +1,7 @@
 [
-  {
-    "title": "My first blog post",
-    "img": "post1-image.png",
-    "text": "## Hello World!\n\nThis is the markdown content for my **new post**."
-  }
+{
+"title": "My First Post",
+"img": "",
+"text": "## Welcome to the Site\n\nThis is my very first post on the new website. I'm excited to finally have a space of my own to share thoughts, updates, and progress as things develop.\n\n### What to Expect\n\n* Updates: Regular news on what I am currently working on.\n* Behind the Scenes: A look into my creative process and life in London.\n\nThanks for stopping by—more posts coming soon."
+}
 ]
