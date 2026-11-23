@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ========================================== -->
+    <!-- 📝 EDIT: WEBSITE TITLE                     -->
+    <!-- ========================================== -->
     <title>B. H. Khanov | Author</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Three.js for 3D Backround -->
+    <!-- Three.js for 3D Background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,6 +112,13 @@
         }
         .reveal-delay-1 { transition-delay: 150ms; }
         .reveal-delay-2 { transition-delay: 300ms; }
+        
+        /* Markdown Blog Styles */
+        .prose h1 { font-size: 2.25rem; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; font-family: 'Horizon', 'Orbitron', sans-serif; text-transform: uppercase; color: white; }
+        .prose h2 { font-size: 1.875rem; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; font-family: 'Horizon', 'Orbitron', sans-serif; text-transform: uppercase; color: #e11d48; }
+        .prose h3 { font-size: 1.5rem; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; color: white; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.8; color: #94a3b8; font-weight: 300; }
+        .prose strong { color: white; font-weight: 700; }
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen">
@@ -123,17 +134,17 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex-shrink-0">
-                    <a href="#" class="font-display text-xl md:text-2xl font-bold tracking-widest text-white hover:text-brand-accent transition-colors duration-300 uppercase relative group">
+                    <a href="#home" onclick="navigate('home')" class="font-display text-xl md:text-2xl font-bold tracking-widest text-white hover:text-brand-accent transition-colors duration-300 uppercase relative group">
+                        <!-- 📝 EDIT: AUTHOR NAME LOGO -->
                         B. H. Khanov
                         <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-brand-accent group-hover:w-full transition-all duration-500"></span>
                     </a>
                 </div>
                 
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#about" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">About</a>
-                    <a href="#books" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Books</a>
-                    <a href="#newsletter" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Contact</a>
-                    <a href="#featured" class="px-6 py-3 bg-brand-accent/10 border border-brand-accent/50 text-brand-accent text-xs uppercase tracking-[0.2em] hover:bg-brand-accent hover:text-white hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all duration-300 rounded-full font-display">Upcoming Debut</a>
+                    <a href="#home" onclick="navigate('home')" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Home</a>
+                    <a href="#blog" onclick="navigate('blog')" class="text-sm font-display uppercase tracking-[0.2em] text-brand-muted hover:text-brand-accent transition-colors">Blog</a>
+                    <a href="#featured" onclick="navigate('home')" class="px-6 py-3 bg-brand-accent/10 border border-brand-accent/50 text-brand-accent text-xs uppercase tracking-[0.2em] hover:bg-brand-accent hover:text-white hover:shadow-[0_0_20px_rgba(225,29,72,0.4)] transition-all duration-300 rounded-full font-display">Upcoming Debut</a>
                 </div>
 
                 <div class="md:hidden flex items-center">
@@ -146,153 +157,192 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-dark/90 backdrop-blur-2xl border-t border-white/10">
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-dark/90 backdrop-blur-2xl border-t border-white/10 absolute w-full">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col font-display">
-                <a href="#about" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">About</a>
-                <a href="#books" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">Books</a>
-                <a href="#newsletter" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl">Contact</a>
+                <a href="#home" onclick="navigate('home')" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl mobile-link">Home</a>
+                <a href="#blog" onclick="navigate('blog')" class="block px-3 py-4 text-center text-xs uppercase tracking-[0.2em] text-brand-muted hover:text-white hover:bg-white/5 transition-colors rounded-xl mobile-link">Blog</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Wrapper (Ensures it sits above the fixed canvas) -->
-    <main class="relative z-10">
+    <!-- Main Content Wrapper -->
+    <main class="relative z-10 pt-20">
         
-        <!-- Hero Section -->
-        <section class="pt-32 pb-16 md:pt-48 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center min-h-screen justify-center reveal">
-            <div class="flex flex-col items-center max-w-6xl mx-auto">
-                <p class="text-brand-accent text-xs md:text-sm font-display uppercase tracking-[0.4em] mb-8 font-bold reveal reveal-delay-1">London-Based Author</p>
-                <h1 class="font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] mb-10 text-transparent bg-clip-text bg-gradient-to-br from-white via-brand-light to-brand-red drop-shadow-2xl text-center uppercase reveal reveal-delay-1">
-                    UNRELENTING<br/>ACTION &<br/>SUSPENSE
-                </h1>
-                <p class="text-brand-light/80 text-lg md:text-xl mb-14 leading-relaxed max-w-2xl font-light tracking-wide reveal reveal-delay-2">
-                    Immerse yourself in high-stakes, adrenaline-fueled action. The explosive debut series arrives 27/07/2027.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-6 w-full sm:w-auto justify-center reveal reveal-delay-2">
-                    <a href="#featured" class="px-10 py-4 bg-brand-accent/20 border border-brand-accent text-white text-center uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:shadow-[0_0_30px_rgba(225,29,72,0.6)] hover:-translate-y-1 transition-all duration-300 rounded-full font-display font-bold backdrop-blur-md">View Debut</a>
-                    <a href="#about" class="px-10 py-4 border border-white/20 text-brand-light text-center uppercase tracking-[0.2em] text-xs hover:border-white/60 hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 rounded-full bg-black/40 backdrop-blur-md font-display font-bold">Read Biography</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Book Section -->
-        <section id="featured" class="py-24 relative overflow-hidden">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="glass-panel p-8 md:p-16 flex flex-col md:flex-row items-center gap-16 reveal">
-                    <!-- Book Cover -->
-                    <div class="md:w-1/3 flex justify-center perspective-1000 relative">
-                        <div class="absolute inset-0 bg-brand-accent rounded-full blur-[100px] opacity-20 z-0"></div>
-                        <a href="#" class="relative z-10 block transition-transform hover:-translate-y-4 hover:scale-105 hover:rotate-2 duration-500 cursor-pointer group">
-                            <img src="https://placehold.co/500x750/0f172a/e11d48?text=Driven+Blind" alt="Unlicensed Intentions: Driven Blind" class="w-full max-w-[280px] md:max-w-[320px] h-auto shadow-[0_30px_60px_rgba(0,0,0,0.8)] rounded-lg ring-1 ring-white/20 group-hover:ring-brand-accent/50 transition-all">
-                        </a>
+        <!-- ======================================================================= -->
+        <!-- VIEW: HOME PAGE                                                         -->
+        <!-- ======================================================================= -->
+        <div id="view-home" class="page-view block">
+            
+            <!-- Hero Section -->
+            <section class="pt-20 pb-16 md:pt-32 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center min-h-[90vh] justify-center reveal">
+                <div class="flex flex-col items-center max-w-6xl mx-auto">
+                    <!-- 📝 EDIT: HERO SECTION TEXT -->
+                    <p class="text-brand-accent text-xs md:text-sm font-display uppercase tracking-[0.4em] mb-8 font-bold reveal reveal-delay-1">London-Based Author</p>
+                    
+                    <h1 class="font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-tight leading-[1.1] mb-10 text-transparent bg-clip-text bg-gradient-to-br from-white via-brand-light to-brand-red drop-shadow-2xl text-center uppercase reveal reveal-delay-1">
+                        UNRELENTING<br/>ACTION &<br/>SUSPENSE
+                    </h1>
+                    
+                    <p class="text-brand-light/80 text-lg md:text-xl mb-14 leading-relaxed max-w-2xl font-light tracking-wide reveal reveal-delay-2">
+                        Immerse yourself in high-stakes, adrenaline-fueled action. The explosive debut series arrives 27/07/2027.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-6 w-full sm:w-auto justify-center reveal reveal-delay-2">
+                        <a href="#featured" class="px-10 py-4 bg-brand-accent/20 border border-brand-accent text-white text-center uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:shadow-[0_0_30px_rgba(225,29,72,0.6)] hover:-translate-y-1 transition-all duration-300 rounded-full font-display font-bold backdrop-blur-md">View Debut</a>
+                        <a href="#about" class="px-10 py-4 border border-white/20 text-brand-light text-center uppercase tracking-[0.2em] text-xs hover:border-white/60 hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 rounded-full bg-black/40 backdrop-blur-md font-display font-bold">Read Biography</a>
                     </div>
-                    <!-- Book Details -->
-                    <div class="md:w-2/3 text-center md:text-left z-10">
-                        <p class="text-brand-accent text-xs font-display font-bold uppercase tracking-[0.3em] mb-4 reveal reveal-delay-1">Series Premiere • Arrives 27/07/2027</p>
-                        <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 text-white leading-tight uppercase reveal reveal-delay-1">Unlicensed Intentions</h2>
-                        <h3 class="font-display font-medium text-2xl md:text-3xl tracking-widest mb-8 text-brand-red uppercase reveal reveal-delay-1">Driven Blind</h3>
-                        <p class="text-brand-muted text-lg mb-10 leading-relaxed max-w-2xl font-light reveal reveal-delay-2">
-                            When a legendary underground getaway driver is blinded in a botched heist, he must rely on a mysterious rogue navigator to survive the deadliest run of his life. Hunted by the ruthless syndicate that betrayed them, every turn is a deadly gamble in this relentless, high-octane action thriller.
-                        </p>
+                </div>
+            </section>
+
+            <!-- Featured Book Section -->
+            <section id="featured" class="py-24 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="glass-panel p-8 md:p-16 flex flex-col md:flex-row items-center gap-16 reveal">
                         
-                        <div class="flex flex-col gap-4 sm:flex-row justify-center md:justify-start items-center mb-10 reveal reveal-delay-2">
-                            <span class="text-brand-light italic text-base border-l-2 border-brand-accent pl-4 font-sans font-light bg-black/30 p-4 rounded-r-xl">"A relentlessly paced, explosive debut that leaves you completely breathless." — Advance Reader</span>
+                        <!-- Book Cover (4044 x 6250 aspect ratio applied) -->
+                        <div class="md:w-1/3 flex justify-center perspective-1000 relative">
+                            <div class="absolute inset-0 bg-brand-accent rounded-full blur-[100px] opacity-20 z-0"></div>
+                            <a href="#" class="relative z-10 block w-full max-w-[280px] md:max-w-[320px] transition-transform hover:-translate-y-4 hover:scale-105 hover:rotate-2 duration-500 cursor-pointer group">
+                                <!-- 📝 EDIT: DRIVEN BLIND COVER IMAGE LINK -->
+                                <img 
+                                    src="drivenblind.png" 
+                                    onerror="this.onerror=null; this.src='https://placehold.co/4044x6250/0f172a/e11d48?text=Driven+Blind'" 
+                                    alt="Unlicensed Intentions: Driven Blind" 
+                                    class="w-full aspect-[4044/6250] object-cover shadow-[0_30px_60px_rgba(0,0,0,0.8)] rounded-lg ring-1 ring-white/20 group-hover:ring-brand-accent/50 transition-all">
+                            </a>
                         </div>
+                        
+                        <!-- Book Details -->
+                        <div class="md:w-2/3 text-center md:text-left z-10">
+                            <!-- 📝 EDIT: DRIVEN BLIND SYNOPSIS AND DETAILS -->
+                            <p class="text-brand-accent text-xs font-display font-bold uppercase tracking-[0.3em] mb-4 reveal reveal-delay-1">Series Premiere • Arrives 27/07/2027</p>
+                            <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-wide mb-2 text-white leading-tight uppercase reveal reveal-delay-1">Unlicensed Intentions</h2>
+                            <h3 class="font-display font-medium text-2xl md:text-3xl tracking-widest mb-8 text-brand-red uppercase reveal reveal-delay-1">Driven Blind</h3>
+                            
+                            <p class="text-brand-muted text-lg mb-10 leading-relaxed max-w-2xl font-light reveal reveal-delay-2">
+                                When a legendary underground getaway driver is blinded in a botched heist, he must rely on a mysterious rogue navigator to survive the deadliest run of his life. Hunted by the ruthless syndicate that betrayed them, every turn is a deadly gamble in this relentless, high-octane action thriller.
+                            </p>
+                            
+                            <div class="flex flex-col gap-4 sm:flex-row justify-center md:justify-start items-center mb-10 reveal reveal-delay-2">
+                                <!-- 📝 EDIT: TESTIMONIAL -->
+                                <span class="text-brand-light italic text-base border-l-2 border-brand-accent pl-4 font-sans font-light bg-black/30 p-4 rounded-r-xl">
+                                    "A relentlessly paced, explosive debut that leaves you completely breathless." <br/>
+                                    <strong class="text-brand-accent font-bold not-italic mt-2 block">— I. Akhtar</strong>
+                                </span>
+                            </div>
 
-                        <div class="flex flex-wrap gap-4 justify-center md:justify-start reveal reveal-delay-2">
-                            <a href="#newsletter" class="px-8 py-4 bg-white text-brand-dark font-display font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:text-white hover:shadow-[0_0_25px_rgba(225,29,72,0.6)] transition-all rounded-full">Pre-order Info</a>
+                            <div class="flex flex-wrap gap-4 justify-center md:justify-start reveal reveal-delay-2">
+                                <a href="#newsletter" class="px-8 py-4 bg-white text-brand-dark font-display font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-accent hover:text-white hover:shadow-[0_0_25px_rgba(225,29,72,0.6)] transition-all rounded-full">Pre-order Info</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- All Books Section -->
-        <section id="books" class="py-32 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-20 reveal">
-                    <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-8 uppercase drop-shadow-lg">Works in Progress</h2>
-                    <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent mx-auto rounded-full shadow-[0_0_20px_rgba(225,29,72,0.8)]"></div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    <!-- Book 1 -->
-                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-1">
-                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
-                            <img src="https://placehold.co/400x600/050b14/f8fafc?text=Rat+to+Rat" alt="Unlicensed Intentions: Rat to Rat" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
-                        </a>
-                        <h3 class="font-display font-bold text-xl tracking-widest text-white mb-1 uppercase text-center">Unlicensed Intentions</h3>
-                        <h4 class="font-display font-bold text-lg tracking-widest text-brand-accent mb-4 uppercase text-center drop-shadow-md">Rat to Rat</h4>
-                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">The explosive sequel to Driven Blind. When the dust settles, a fresh betrayal forces him back into the lethal underground. (Drafting)</p>
+            <!-- All Books / Works in Progress Section -->
+            <section id="books" class="py-32 relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-20 reveal">
+                        <!-- 📝 EDIT: WORKS IN PROGRESS HEADER -->
+                        <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-8 uppercase drop-shadow-lg">Works in Progress</h2>
+                        <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent mx-auto rounded-full shadow-[0_0_20px_rgba(225,29,72,0.8)]"></div>
                     </div>
 
-                    <!-- Book 2 -->
-                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-2">
-                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
-                            <img src="https://placehold.co/400x600/0a192f/f8fafc?text=Neon+Vendetta" alt="Neon Vendetta" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
-                        </a>
-                        <h3 class="font-display font-bold text-2xl tracking-widest text-white mb-4 uppercase text-center group-hover:text-brand-accent transition-colors">Neon Vendetta</h3>
-                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">A disgraced enforcer hunts a rogue syndicate through London's unforgiving, neon-lit criminal underbelly. (Outlining)</p>
-                    </div>
-
-                    <!-- Book 3 -->
-                    <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-1 md:reveal-delay-3 lg:reveal-delay-3">
-                        <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
-                            <img src="https://placehold.co/400x600/7a112c/f8fafc?text=Thames+Requiem" alt="Thames Requiem" class="w-full h-auto shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
-                        </a>
-                        <h3 class="font-display font-bold text-2xl tracking-widest text-white mb-4 uppercase text-center group-hover:text-brand-accent transition-colors">Thames Requiem</h3>
-                        <p class="text-brand-muted text-center text-sm leading-relaxed font-light">A high-stakes riverway heist goes terribly wrong, leaving no room for error and no one to trust. (Concept)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-center">
+                        
+                        <!-- Book 1: Rat to Rat -->
+                        <div class="group flex flex-col items-center p-10 glass-panel hover:bg-white/5 hover:border-brand-accent/50 hover:-translate-y-3 transition-all duration-500 reveal reveal-delay-1 lg:col-start-2">
+                            <a href="#" class="relative overflow-hidden rounded-lg mb-8 w-full max-w-[220px] block cursor-pointer">
+                                <!-- 📝 EDIT: RAT TO RAT COVER IMAGE LINK -->
+                                <img 
+                                    src="rattorat.png" 
+                                    onerror="this.onerror=null; this.src='https://placehold.co/4044x6250/050b14/f8fafc?text=Cover+Coming+Soon'" 
+                                    alt="Unlicensed Intentions: Rat to Rat" 
+                                    class="w-full aspect-[4044/6250] object-cover shadow-2xl shadow-black/80 transition-transform duration-700 group-hover:scale-110 ring-1 ring-white/10 group-hover:ring-brand-accent/50">
+                            </a>
+                            <!-- 📝 EDIT: RAT TO RAT DETAILS -->
+                            <h3 class="font-display font-bold text-xl tracking-widest text-white mb-1 uppercase text-center">Unlicensed Intentions</h3>
+                            <h4 class="font-display font-bold text-lg tracking-widest text-brand-accent mb-4 uppercase text-center drop-shadow-md">Rat to Rat</h4>
+                            <p class="text-brand-muted text-center text-sm leading-relaxed font-light">The explosive sequel to Driven Blind. When the dust settles, a fresh betrayal forces him back into the lethal underground. (Drafting)</p>
+                        </div>
+                        
+                        <!-- (Placeholder Books 2 and 3 removed per request) -->
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- About Section -->
-        <section id="about" class="py-32 relative overflow-hidden">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center glass-panel p-10 md:p-20 reveal">
-                <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-10 uppercase drop-shadow-md">About B. H. Khanov</h2>
-                <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto rounded-full mb-14"></div>
-                
-                <p class="text-brand-light/90 mb-8 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
-                    B. H. Khanov is a debut author based in London, crafting explosive action thrillers and high-stakes contemporary fiction. With a mind for intricate plots and relentless pacing, he builds stories that refuse to tap the brakes.
-                </p>
-                <p class="text-brand-light/90 mb-14 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
-                    Drawing inspiration from the gritty, hidden underworld of London and a fascination with high-stakes survival, he is currently putting the final touches on his highly anticipated debut action series.
-                </p>
-                
-                <a href="#newsletter" class="inline-flex items-center gap-4 text-brand-accent font-display font-bold uppercase tracking-[0.2em] hover:text-white transition-colors text-sm hover:translate-x-2 duration-300 reveal reveal-delay-2">
-                    Get in Touch 
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </a>
-            </div>
-        </section>
+            <!-- About Section -->
+            <section id="about" class="py-32 relative overflow-hidden">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center glass-panel p-10 md:p-20 reveal">
+                    <!-- 📝 EDIT: ABOUT ME TEXT -->
+                    <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-widest text-white mb-10 uppercase drop-shadow-md">About B. H. Khanov</h2>
+                    <div class="w-32 h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent mx-auto rounded-full mb-14"></div>
+                    
+                    <p class="text-brand-light/90 mb-8 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
+                        B. H. Khanov is a debut author based in London, crafting explosive action thrillers and high-stakes contemporary fiction. With a mind for intricate plots and relentless pacing, he builds stories that refuse to tap the brakes.
+                    </p>
+                    <p class="text-brand-light/90 mb-14 leading-relaxed text-xl md:text-2xl font-light reveal reveal-delay-1">
+                        Drawing inspiration from the gritty, hidden underworld of London and a fascination with high-stakes survival, he is currently putting the final touches on his highly anticipated debut action series.
+                    </p>
+                    
+                    <a href="#newsletter" class="inline-flex items-center gap-4 text-brand-accent font-display font-bold uppercase tracking-[0.2em] hover:text-white transition-colors text-sm hover:translate-x-2 duration-300 reveal reveal-delay-2">
+                        Get in Touch 
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </a>
+                </div>
+            </section>
 
-        <!-- Newsletter/Contact Section -->
-        <section id="newsletter" class="py-32 relative overflow-hidden">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
-                <h2 class="font-display font-bold text-3xl md:text-5xl tracking-widest mb-8 text-white uppercase drop-shadow-lg">Join the Readers' Club</h2>
-                <p class="text-brand-muted text-lg mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-                    Subscribe to get exclusive updates on my debut release, early access to cover reveals, and news about upcoming projects directly to your inbox.
-                </p>
-                
-                <form class="flex flex-col sm:flex-row max-w-xl mx-auto gap-4 sm:gap-0 shadow-2xl shadow-black/80 rounded-3xl sm:rounded-full bg-black/60 backdrop-blur-2xl border border-white/20 p-2 focus-within:border-brand-accent/50 transition-colors">
-                    <input type="email" placeholder="Enter your email address" required class="w-full sm:w-2/3 px-8 py-4 bg-transparent text-white placeholder-brand-muted focus:outline-none rounded-full font-sans font-light tracking-wide">
-                    <button type="submit" class="w-full sm:w-1/3 px-8 py-4 bg-brand-accent text-white font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-red hover:shadow-[0_0_20px_rgba(225,29,72,0.8)] transition-all rounded-full border border-transparent font-display">
-                        Subscribe
-                    </button>
-                </form>
-                <p class="text-brand-muted/70 text-sm mt-8 font-sans font-light">No spam. Unsubscribe at any time.</p>
+            <!-- Newsletter/Contact Section -->
+            <section id="newsletter" class="py-32 relative overflow-hidden">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
+                    <!-- 📝 EDIT: NEWSLETTER TEXT -->
+                    <h2 class="font-display font-bold text-3xl md:text-5xl tracking-widest mb-8 text-white uppercase drop-shadow-lg">Join the Readers' Club</h2>
+                    <p class="text-brand-muted text-lg mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                        Subscribe to get exclusive updates on my debut release, early access to cover reveals, and news about upcoming projects directly to your inbox.
+                    </p>
+                    
+                    <form onsubmit="event.preventDefault(); alert('Subscribed successfully!');" class="flex flex-col sm:flex-row max-w-xl mx-auto gap-4 sm:gap-0 shadow-2xl shadow-black/80 rounded-3xl sm:rounded-full bg-black/60 backdrop-blur-2xl border border-white/20 p-2 focus-within:border-brand-accent/50 transition-colors">
+                        <input type="email" placeholder="Enter your email address" required class="w-full sm:w-2/3 px-8 py-4 bg-transparent text-white placeholder-brand-muted focus:outline-none rounded-full font-sans font-light tracking-wide">
+                        <button type="submit" class="w-full sm:w-1/3 px-8 py-4 bg-brand-accent text-white font-bold uppercase tracking-[0.2em] text-xs hover:bg-brand-red hover:shadow-[0_0_20px_rgba(225,29,72,0.8)] transition-all rounded-full border border-transparent font-display">
+                            Subscribe
+                        </button>
+                    </form>
+                    <p class="text-brand-muted/70 text-sm mt-8 font-sans font-light">No spam. Unsubscribe at any time.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ======================================================================= -->
+        <!-- VIEW: BLOG PAGE                                                         -->
+        <!-- ======================================================================= -->
+        <div id="view-blog" class="page-view hidden min-h-[80vh] py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <!-- 📝 EDIT: BLOG HEADER TEXT -->
+                <h2 class="font-display font-black text-5xl md:text-7xl tracking-widest text-white mb-6 uppercase drop-shadow-lg">Intel & Updates</h2>
+                <p class="text-brand-muted text-lg max-w-2xl mx-auto font-light">Behind the scenes, writing updates, and deep dives into the criminal underworld of Unlicensed Intentions.</p>
             </div>
-        </section>
+
+            <!-- Blog container where JS will inject posts from blogs.json -->
+            <div id="blog-container" class="space-y-12">
+                <!-- Posts load here dynamically -->
+                <div class="text-center text-brand-muted">
+                    <div class="animate-pulse flex flex-col items-center">
+                        <div class="h-64 bg-white/5 rounded-2xl w-full mb-4"></div>
+                        <div class="h-8 bg-white/5 rounded w-1/2 mb-4"></div>
+                        <div class="h-4 bg-white/5 rounded w-full mb-2"></div>
+                        <div class="h-4 bg-white/5 rounded w-3/4 mb-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Footer -->
-        <footer class="bg-black/80 backdrop-blur-2xl text-brand-muted py-12 border-t border-white/10 relative z-20">
+        <footer class="bg-black/80 backdrop-blur-2xl text-brand-muted py-12 border-t border-white/10 relative z-20 mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="text-center md:text-left">
                     <p class="font-display font-bold text-xl tracking-widest text-white mb-3 uppercase">B. H. Khanov</p>
                     <p class="text-sm font-sans font-light">© 2026 B. H. Khanov. All rights reserved.</p>
                 </div>
-                
                 <div class="text-xs font-display font-bold text-center md:text-right uppercase tracking-[0.2em] text-brand-muted/80">
                     <p>Based in London, UK</p>
                 </div>
@@ -301,6 +351,106 @@
     </main>
 
     <script>
+        // ----------------------------------------------------
+        // ROUTING (SINGLE PAGE APP LOGIC)
+        // ----------------------------------------------------
+        function navigate(viewName) {
+            // Hide all views
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(v => v.classList.add('hidden'));
+            
+            // Show requested view
+            const target = document.getElementById('view-' + viewName);
+            if(target) {
+                target.classList.remove('hidden');
+                target.classList.add('block');
+            }
+
+            // Scroll to top safely
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // If navigating to blog, load the blog data
+            if(viewName === 'blog') {
+                loadBlogPosts();
+            }
+        }
+
+        // Handle browser back/forward buttons
+        window.addEventListener('hashchange', () => {
+            if(window.location.hash === '#blog') {
+                navigate('blog');
+            } else {
+                navigate('home');
+            }
+        });
+
+        // ----------------------------------------------------
+        // BLOG SYSTEM (FETCHES FROM blogs.json)
+        // ----------------------------------------------------
+        let blogLoaded = false;
+
+        function loadBlogPosts() {
+            if(blogLoaded) return; // Prevent re-fetching every click
+            
+            const container = document.getElementById('blog-container');
+            
+            // Fetch from blogs.json as requested
+            fetch('blogs.json')
+                .then(response => {
+                    if(!response.ok) throw new Error("File not found");
+                    return response.json();
+                })
+                .then(data => renderPosts(data, container))
+                .catch(error => {
+                    console.log("Could not load blogs.json, rendering fallback post. Error:", error);
+                    // 📝 EDIT: FALLBACK BLOG POST (Shows if blogs.json is missing)
+                    const fallbackData = [
+                        {
+                            "title": "Welcome to the Author's Log",
+                            "img": "image_2627fc.png",
+                            "text": "## Transmission Started\n\nIf you are reading this, it means the `blogs.json` file hasn't been uploaded yet, or is inaccessible. \n\nTo update your blog, create a file named `blogs.json` in your root folder and structure it like an array of posts. Example:\n\n```\n[\n  {\n    \"title\": \"My Post\",\n    \"img\": \"image.png\",\n    \"text\": \"## Heading\\n\\nSome text **bold**.\"\n  }\n]\n```\n\nStay tuned for official updates regarding *Unlicensed Intentions: Driven Blind*."
+                        }
+                    ];
+                    renderPosts(fallbackData, container);
+                });
+        }
+
+        // Simple Markdown to HTML parser
+        function parseMD(md) {
+            let html = md;
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            html = html.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+            html = html.replace(/\*(.*)\*/gim, '<i>$1</i>');
+            // convert newlines to line breaks, ignoring inside code blocks (rudimentary)
+            html = html.replace(/\n/gim, '<br>');
+            return html;
+        }
+
+        function renderPosts(posts, container) {
+            container.innerHTML = ''; // Clear loading pulse
+            
+            posts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'glass-panel p-8 md:p-12 flex flex-col gap-8 reveal active'; // 'active' immediately applied in blog view
+                
+                const htmlContent = `
+                    ${post.img ? `<img src="${post.img}" onerror="this.style.display='none'" class="w-full h-64 md:h-96 object-cover rounded-2xl ring-1 ring-white/10" alt="${post.title}">` : ''}
+                    <div>
+                        <h1 class="font-display font-bold text-3xl md:text-4xl tracking-wide mb-6 text-white uppercase">${post.title}</h1>
+                        <div class="prose font-sans font-light">
+                            ${parseMD(post.text)}
+                        </div>
+                    </div>
+                `;
+                article.innerHTML = htmlContent;
+                container.appendChild(article);
+            });
+            blogLoaded = true;
+        }
+
+
         // ----------------------------------------------------
         // UI INTERACTION LOGIC
         // ----------------------------------------------------
@@ -313,7 +463,7 @@
             menu.classList.toggle('hidden');
         });
 
-        const mobileLinks = menu.querySelectorAll('a');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 menu.classList.add('hidden');
@@ -350,6 +500,11 @@
         // ----------------------------------------------------
         
         window.onload = function () {
+            // Check initial URL hash for SPA routing on direct link
+            if(window.location.hash === '#blog') {
+                navigate('blog');
+            }
+
             const canvas = document.querySelector('#webgl-canvas');
             const scene = new THREE.Scene();
             
@@ -377,12 +532,10 @@
             const color3 = new THREE.Color(0xffffff); // White hot
 
             for(let i = 0; i < particlesCount * 3; i+=3) {
-                // Spread particles widely
                 posArray[i] = (Math.random() - 0.5) * 150; 
                 posArray[i+1] = (Math.random() - 0.5) * 150; 
                 posArray[i+2] = (Math.random() - 0.5) * 100;
 
-                // Mix colors randomly
                 let mixedColor;
                 const rand = Math.random();
                 if(rand < 0.6) mixedColor = color1;
@@ -397,7 +550,6 @@
             particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
             particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
-            // Custom glowing material
             const material = new THREE.PointsMaterial({
                 size: window.innerWidth < 768 ? 0.3 : 0.4,
                 vertexColors: true,
@@ -410,7 +562,7 @@
             const particlesMesh = new THREE.Points(particlesGeometry, material);
             scene.add(particlesMesh);
 
-            // 2. Create Floating Abstract Wireframes (Sci-Fi/Action Vibe)
+            // 2. Create Floating Abstract Wireframes
             const shapeMaterial = new THREE.MeshBasicMaterial({ 
                 color: 0xe11d48, 
                 wireframe: true, 
@@ -439,7 +591,6 @@
                 mouseY = (event.clientY - windowHalfY);
             });
             
-            // Adjust camera slightly on scroll for parallax
             let scrollY = window.scrollY;
             window.addEventListener('scroll', () => {
                 scrollY = window.scrollY;
@@ -451,23 +602,19 @@
             const animate = () => {
                 const elapsedTime = clock.getElapsedTime();
                 
-                // Slowly rotate entire particle field
                 particlesMesh.rotation.y = elapsedTime * 0.03;
                 particlesMesh.rotation.x = elapsedTime * 0.01;
 
-                // Rotate abstract shapes
                 shape1.rotation.x = elapsedTime * 0.1;
                 shape1.rotation.y = elapsedTime * 0.15;
                 shape2.rotation.x = -elapsedTime * 0.05;
                 shape2.rotation.z = elapsedTime * 0.1;
 
-                // Smooth mouse following for particles (parallax)
                 targetX = mouseX * 0.001;
                 targetY = mouseY * 0.001;
                 particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
                 particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
                 
-                // Move camera based on mouse AND scroll position
                 const cameraTargetX = (mouseX * 0.01);
                 const cameraTargetY = (-mouseY * 0.01) - (scrollY * 0.01);
                 
